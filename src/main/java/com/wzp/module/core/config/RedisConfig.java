@@ -22,7 +22,6 @@ public class RedisConfig {
      */
     @Bean
     public RedisTemplate<String,Object> redisTemplate(RedisConnectionFactory factory) {
-        // 测试
         RedisTemplate<String,Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(factory);
         // value 序列化方式
