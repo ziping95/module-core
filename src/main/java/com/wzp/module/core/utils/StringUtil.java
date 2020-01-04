@@ -1,8 +1,5 @@
 package com.wzp.module.core.utils;
 
-
-
-import com.sun.deploy.util.ParameterUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -14,7 +11,7 @@ import java.util.*;
  */
 public class StringUtil extends StringUtils {
     public static final String UTF8 = "UTF-8";
-    private static final String ALL_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String ALL_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     /**
      * 判断字符串是否为空

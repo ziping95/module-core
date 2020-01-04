@@ -1,8 +1,11 @@
 package com.wzp.module.core.utils;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class FileUtil {
@@ -446,5 +449,32 @@ public class FileUtil {
         }
 
         return file;
+    }
+
+    /**
+     * 读取json文件返回json对象
+     * @param path
+     * @return
+     */
+    public static<T> T readJsonFile(String path,Class<T> clazz) throws IOException, IllegalAccessException {
+        File jsonFile = new File(path);
+        FileReader fileReader = new FileReader(jsonFile);
+        Reader reader = new InputStreamReader(new FileInputStream(jsonFile), StandardCharsets.UTF_8);
+        try {
+            int ch = 0;
+            StringBuilder stringBuffer = new StringBuilder();
+            while ((ch = reader.read()) != -1) {
+                stringBuffer.append((char) ch);
+            }
+            if(clazz == JSONObject.class) {
+                return (T) JSONObject.parseObject(stringBuffer.toString());
+            } else if (clazz == JSONArray.class) {
+                return (T) JSONArray.parseArray(stringBuffer.toString());
+            }
+            throw new IllegalAccessException("类型必须为JSONObject或JSONArray");
+        } finally {
+            fileReader.close();
+            reader.close();
+        }
     }
 }
