@@ -7,3 +7,8 @@
 ---
 * 增加Spring-security依赖
 
+#### 2020.01.19
+
+---
+* 增加安装包下载接口 `/open/download/{type}`
+
