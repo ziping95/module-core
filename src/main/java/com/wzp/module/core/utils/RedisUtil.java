@@ -1,6 +1,5 @@
 package com.wzp.module.core.utils;
 
-
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
