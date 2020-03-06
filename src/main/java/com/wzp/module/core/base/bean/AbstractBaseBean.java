@@ -6,6 +6,7 @@ import java.util.Date;
 
 @Data
 public abstract class AbstractBaseBean {
+    // ceshi
 
     private String id;
 
