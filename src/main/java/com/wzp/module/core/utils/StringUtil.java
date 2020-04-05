@@ -2,6 +2,11 @@ package com.wzp.module.core.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -179,5 +184,42 @@ public class StringUtil extends StringUtils {
 
         // 如果a部位null，则正常比较
         return a.equals(b);
+    }
+
+    /**
+     * 从流中读取字符串
+     * @param inputStream
+     * @return
+     * @throws IOException
+     */
+    public static String readStrFromInputStream(InputStream inputStream) throws Exception {
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            StringBuilder stringBuilder = new StringBuilder();
+            String s;
+            while ((s = in.readLine()) != null) {
+                stringBuilder.append(s);
+            }
+            return stringBuilder.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception(e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

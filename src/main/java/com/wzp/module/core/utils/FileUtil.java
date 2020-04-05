@@ -2,6 +2,10 @@ package com.wzp.module.core.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -477,4 +481,57 @@ public class FileUtil {
             reader.close();
         }
     }
+
+    /**
+     * 通过读取流解析xml
+     * @param inputStream
+     * @return
+     * @throws IOException
+     * @throws DocumentException
+     */
+    public static Map<String,Object> readXmlToMap(InputStream inputStream) throws IOException, DocumentException {
+        StringBuilder stringBuilder = new StringBuilder();
+        byte[] buffer = new byte[1024];
+        while ((inputStream.read(buffer)) > 0) {
+            stringBuilder.append(new String(buffer, StandardCharsets.UTF_8));
+        }
+        return readXmlToMap(stringBuilder.toString().trim());
+    }
+
+    /**
+     * 通过字符串解析xml
+     * @param content
+     * @return
+     * @throws DocumentException
+     */
+    public static Map<String,Object> readXmlToMap(String content) throws DocumentException {
+        Map<String,Object> map = new HashMap<>();
+        Document doc = null;
+        doc = DocumentHelper.parseText(content);
+        Element root = doc.getRootElement();
+        for (Iterator iterator = root.elementIterator(); iterator.hasNext();) {
+            Element e = (Element) iterator.next();
+            map.put(e.getName(), e.getText());
+        }
+        return map;
+    }
+
+    /**
+     * 生成xml
+     * @param params
+     * @return
+     */
+    public static String createXmlFromMap(Map<String,Object> params) {
+        // 创建根节点
+        Document document = DocumentHelper.createDocument();
+        Element xml = DocumentHelper.createElement("xml");
+        document.setRootElement(xml);
+        params.forEach((k,v) -> {
+            Element element = xml.addElement(k);
+            element.addCDATA((String) v);
+        });
+        return document.getRootElement().asXML();
+    }
+
+
 }
