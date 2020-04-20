@@ -436,9 +436,10 @@ public class FileUtil {
 
         FileWriter fileWritter = null;
         try {
-            fileWritter = new FileWriter(file.getName(),append);
+            fileWritter = new FileWriter(file,append);
             for (String content : contents) {
                 fileWritter.write(content + "\r\n");
+                fileWritter.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -453,6 +454,34 @@ public class FileUtil {
         }
 
         return file;
+    }
+
+    /**
+     * 创建txt
+     *
+     * @param content
+     * @param title
+     * @return
+     * @throws IOException
+     */
+    public static String createTxt(String path,String content, String title) throws IOException {
+        byte[] bom = new byte[]{(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
+        File dir = new File(path);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        String address = path + "/" + title + ".txt";
+        File file = new File(address);
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+        FileOutputStream fileOut = new FileOutputStream(file);
+        fileOut.write(bom);  // 在文件头设置utf-8-bom格式
+        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(fileOut, StandardCharsets.UTF_8));
+        out.write(content);
+        out.flush();
+        out.close();
+        return address;
     }
 
     /**

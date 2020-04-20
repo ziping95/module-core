@@ -46,19 +46,19 @@ public class RedisConfig {
     private boolean testOnBorrow;
     @Value("${redis.testWhileIdle}")
     private boolean testWhileIdle;
-    @Value("${redis.database}")
-    private int database;
 
     @Bean
     public JedisPoolConfig getJedisPoolConfig() {
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+        // 连接耗尽时是否阻塞, false报异常,ture阻塞直到超时, 默认true
+        jedisPoolConfig.setBlockWhenExhausted(true);
         // 最大空闲数
         jedisPoolConfig.setMaxIdle(maxIdle);
         // 连接池的最大数据库连接数
         jedisPoolConfig.setMaxTotal(maxTotal);
-        // 最大建立连接等待时间
+        // 获取连接时的最大等待毫秒数(如果设置为阻塞时BlockWhenExhausted),如果超时就抛异常, 小于零:阻塞不确定的时间,  默认-1
         jedisPoolConfig.setMaxWaitMillis(maxWaitMillis);
-        // 逐出连接的最小空闲时间 默认1800000毫秒(30分钟)
+        // 对象空闲多久后逐出, 当空闲时间>该值 且 空闲连接>最大空闲数 时直接逐出,不再根据MinEvictableIdleTimeMillis判断  (默认逐出策略)
         jedisPoolConfig.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
         // 每次逐出检查时 逐出的最大数目 如果为负数就是 : 1/abs(n), 默认3
         jedisPoolConfig.setNumTestsPerEvictionRun(numTestsPerEvictionRun);
@@ -114,7 +114,7 @@ public class RedisConfig {
         Set<RedisNode> nodes = new HashSet<RedisNode>();
         for(String ipPort:serverArray){
             String[] ipAndPort = ipPort.split(":");
-            nodes.add(new RedisNode(ipAndPort[0].trim(),Integer.valueOf(ipAndPort[1])));
+            nodes.add(new RedisNode(ipAndPort[0].trim(),Integer.parseInt(ipAndPort[1])));
         }
         redisClusterConfiguration.setClusterNodes(nodes);
         redisClusterConfiguration.setMaxRedirects(maxRedirects);
@@ -132,10 +132,8 @@ public class RedisConfig {
     public JedisConnectionFactory jedisConnectionFactory() {
         //集群模式
         JedisConnectionFactory  factory = new JedisConnectionFactory(redisClusterConfiguration(),getJedisPoolConfig());
-        factory.setDatabase(database);
         factory.setTimeout(timeout);
         factory.setUsePool(true);
         return factory;
     }
-
 }
