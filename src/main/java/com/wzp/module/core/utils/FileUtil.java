@@ -10,7 +10,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class FileUtil {
     private static String classPath = null;
@@ -560,6 +563,66 @@ public class FileUtil {
             element.addCDATA((String) v);
         });
         return document.getRootElement().asXML();
+    }
+
+    /**
+     * 生成文件
+     *
+     * @param path
+     * @param fileName
+     * @param inputStream
+     * @return
+     * @throws IOException
+     */
+    public static String createFile(String path, String fileName, InputStream inputStream) throws IOException {
+        File dir = new File(path);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        String address = path + "/" + fileName;
+        File file = new File(address);
+        byte[] buffer = new byte[1024];
+        OutputStream outPutStream = new FileOutputStream(file);
+        int len = 0;
+        while ((len = inputStream.read(buffer)) > 0) {
+            outPutStream.write(buffer, 0, len);
+        }
+        inputStream.close();
+        outPutStream.flush();
+        outPutStream.close();
+        return address;
+    }
+
+    /**
+     * 生成zip
+     *
+     * @param path
+     * @param zipName
+     * @param files
+     * @return
+     */
+    public static String createZip(String path,String zipName, List<Map<String,Object>> files) throws IOException {
+        FileInputStream nFileInputStream = null;
+        ZipOutputStream zipOutputStream = null;
+        File dir = new File(path);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        byte[] buffer = new byte[1024];
+        String address = path + "/" + zipName;
+        zipOutputStream = new ZipOutputStream(new FileOutputStream(address));
+        for (Map<String,Object> file : files) {
+            nFileInputStream = new FileInputStream((File) file.get("file"));
+            zipOutputStream.putNextEntry(new ZipEntry((String) file.get("fileName")));
+            int len = 0;
+            while ((len = nFileInputStream.read(buffer)) > 0) {
+                zipOutputStream.write(buffer,0, len);
+            }
+            zipOutputStream.flush();
+        }
+        zipOutputStream.close();
+        nFileInputStream.close();
+        return address;
     }
 
 
