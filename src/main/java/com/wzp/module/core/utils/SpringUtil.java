@@ -12,8 +12,11 @@ public class SpringUtil {
 
     private static SpringUtil springUtil;
 
-    @Autowired
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
+
+    public SpringUtil(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @PostConstruct
     private void init() {
